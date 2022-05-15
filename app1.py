@@ -58,8 +58,8 @@ def app():
 
         # Plot stock price 
         # st.write('Price history for: $' + option.upper())
-        
-        st.write('Price history for:', ticker.info['longName'])
+        st.title(ticker.info['longName'])
+        st.write('Price History')
         st.line_chart(df[['Adj Close']])
 
         # Plot the prices and the bolinger bands
