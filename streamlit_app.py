@@ -34,7 +34,7 @@ st.write(company1.info['longBusinessSummary'])
 st.write(google)
 
 # plots the graph
-st.line_chart(data1.values)
+st.line_chart(data1.close)
 
 st.write("""
 ### Microsoft
