@@ -14,6 +14,7 @@ def app():
     # sidebar #
     ###########
     option = st.sidebar.text_input('Ticker:', 'GOOG')
+    ticker = yf.Ticker(option)
     import datetime
     today = datetime.date.today()
     before = today - datetime.timedelta(days=700)
@@ -36,7 +37,7 @@ def app():
         st.write("Ticker", option, "does not exist")
 
     else:
-
+       
         # Bollinger Bands
         indicator_bb = BollingerBands(df['Close'])
         bb = df
@@ -56,7 +57,9 @@ def app():
         ###################
 
         # Plot stock price 
-        st.write('Price history for: $' + option.upper())
+        # st.write('Price history for: $' + option.upper())
+        
+        st.write('Price history for:', ticker.info['longName'])
         st.line_chart(df[['Adj Close']])
 
         # Plot the prices and the bolinger bands
