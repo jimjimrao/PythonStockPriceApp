@@ -1,43 +1,68 @@
 import streamlit as st
-import yfinance as finance
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+import yfinance as yf # https://pypi.org/project/yfinance/
+from ta.volatility import BollingerBands
+from ta.trend import MACD
+from ta.momentum import RSIIndicator
+
+###########
+# sidebar #
+###########
+option = st.sidebar.selectbox('Select one symbol', ( 'AAPL', 'MSFT',"SPY",'WMT','TSLA'))
+import datetime
+today = datetime.date.today()
+before = today - datetime.timedelta(days=700)
+start_date = st.sidebar.date_input('Start date', before)
+end_date = st.sidebar.date_input('End date', today)
+if start_date < end_date:
+    st.sidebar.success('Start date: `%s`\n\nEnd date:`%s`' % (start_date, end_date))
+else:
+    st.sidebar.error('Error: End date must fall after start date.')
+
+##############
+# Stock data #
+##############
+
+# Download data
+df = yf.download(option,start= start_date,end= end_date, progress=False)
+
+# Bollinger Bands
+indicator_bb = BollingerBands(df['Close'])
+bb = df
+bb['bb_h'] = indicator_bb.bollinger_hband()
+bb['bb_l'] = indicator_bb.bollinger_lband()
+bb = bb[['Close','bb_h','bb_l']]
+
+# Moving Average Convergence Divergence
+macd = MACD(df['Close']).macd()
+
+# Resistence Strength Indicator
+rsi = RSIIndicator(df['Close']).rsi()
+
+###################
+# Set up main app #
+###################
+
+# Plot the prices and the bolinger bands
+st.write('Stock Bollinger Bands')
+st.line_chart(bb)
+
+progress_bar = st.progress(0)
+
+# Plot MACD
+st.write('Stock Moving Average Convergence Divergence (MACD)')
+st.area_chart(macd)
+
+# Plot RSI
+st.write('Stock RSI ')
+st.line_chart(rsi)
+
+# Data of recent days
+st.write('Recent data ')
+st.dataframe(df.tail(10))
 
 
-
-def get_ticker(name):
-	company = finance.Ticker(name) # google
-	return company
-
-
-# Project Details
-st.title("Build and Deploy Stock Market App Using Streamlit")
-st.header("A Basic Data Science Web Application")
-st.sidebar.header("Geeksforgeeks \n TrueGeeks")
-
-company1 = get_ticker("GOOGL")
-company2 = get_ticker("MSFT")
-
-# fetches the data: Open, Close, High, Low and Volume
-google = finance.download("GOOGL", start="2022-01-01", end="2022-02-01")
-microsoft = finance.download("MSFT", start="2022-01-01", end="2022-02-01")
-
-# Valid periods: 1d,5d,1mo,3mo,6mo,1y,2y,5y,10y,ytd,max
-data1 = company1.history(period="3mo")
-data2 = company2.history(period="3mo")
-
-# markdown syntax
-st.write("""
-### Google
-""")
-
-# detailed summary on Google
-st.write(company1.info['longBusinessSummary'])
-st.write(google)
-
-# plots the graph
-st.line_chart(data1.close)
-
-st.write("""
-### Microsoft
-""")
-st.write(company2.info['longBusinessSummary'], "\n", microsoft)
-st.line_chart(data2.values)
