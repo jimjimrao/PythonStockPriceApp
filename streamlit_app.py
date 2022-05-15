@@ -17,8 +17,8 @@ company1 = get_ticker("GOOGL")
 company2 = get_ticker("MSFT")
 
 # fetches the data: Open, Close, High, Low and Volume
-google = finance.download("GOOGL", start="2020-10-01", end="2021-10-01")
-microsoft = finance.download("MSFT", start="2020-10-01", end="2021-10-01")
+google = finance.download("GOOGL", start="2022-01-01", end="2022-02-01")
+microsoft = finance.download("MSFT", start="2022-01-01", end="2022-02-01")
 
 # Valid periods: 1d,5d,1mo,3mo,6mo,1y,2y,5y,10y,ytd,max
 data1 = company1.history(period="3mo")
