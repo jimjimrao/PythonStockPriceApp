@@ -13,7 +13,7 @@ def app():
     ###########
     # sidebar #
     ###########
-    option = st.sidebar.selectbox('Select one symbol', ( 'AAPL', 'MSFT',"SPY",'WMT','TSLA'))
+    option = st.sidebar.text_input('Ticker:', 'GOOG')
     import datetime
     today = datetime.date.today()
     before = today - datetime.timedelta(days=700)
@@ -29,60 +29,52 @@ def app():
     ##############
 
     # Download data
+# try:
     df = yf.download(option,start= start_date,end= end_date, progress=False)
     print(df.head())
+    if df.empty:
+        st.write("Ticker", option, "does not exist")
 
-    # Bollinger Bands
-    indicator_bb = BollingerBands(df['Close'])
-    bb = df
-    bb['bb_h'] = indicator_bb.bollinger_hband()
-    bb['bb_l'] = indicator_bb.bollinger_lband()
-    bb = bb[['Close','bb_h','bb_l']]
+    else:
 
-    # Moving Average Convergence Divergence
-    macd = MACD(df['Close']).macd()
+        # Bollinger Bands
+        indicator_bb = BollingerBands(df['Close'])
+        bb = df
+        bb['bb_h'] = indicator_bb.bollinger_hband()
+        bb['bb_l'] = indicator_bb.bollinger_lband()
+        bb = bb[['Close','bb_h','bb_l']]
 
-    # Resistence Strength Indicator
-    rsi = RSIIndicator(df['Close']).rsi()
+        # Moving Average Convergence Divergence
+        macd = MACD(df['Close']).macd()
 
-    # Stock name 
-    import requests
-
-
-    def get_symbol(symbol):
-        symbol_list = requests.get("http://chstocksearch.herokuapp.com/api/{}".format(symbol)).json()
-
-        for x in symbol_list:
-            if x['symbol'] == symbol:
-                return x['company']
+        # Resistence Strength Indicator
+        rsi = RSIIndicator(df['Close']).rsi()
 
 
-    # company = get_symbol(option)
+        ###################
+        # Set up main app #
+        ###################
 
-    ###################
-    # Set up main app #
-    ###################
+        # Plot stock price 
+        st.write('Price history for: $' + option.upper())
+        st.line_chart(df[['Adj Close']])
 
-    # Plot stock price 
-    st.write('Price history for:', option)
-    st.line_chart(df[['Adj Close']])
+        # Plot the prices and the bolinger bands
+        st.write('Stock Bollinger Bands')
+        st.line_chart(bb)
 
-    # Plot the prices and the bolinger bands
-    st.write('Stock Bollinger Bands')
-    st.line_chart(bb)
+        # progress_bar = st.progress(0)
 
-    # progress_bar = st.progress(0)
+        # Plot MACD
+        st.write('Stock Moving Average Convergence Divergence (MACD)')
+        st.area_chart(macd)
 
-    # Plot MACD
-    st.write('Stock Moving Average Convergence Divergence (MACD)')
-    st.area_chart(macd)
+        # Plot RSI
+        st.write('Stock RSI ')
+        st.line_chart(rsi)
 
-    # Plot RSI
-    st.write('Stock RSI ')
-    st.line_chart(rsi)
-
-    # Data of recent days
-    st.write('Recent data ')
-    st.dataframe(df.tail(10))
+        # Data of recent days
+        st.write('Recent data ')
+        st.dataframe(df.tail(10))
 
 
