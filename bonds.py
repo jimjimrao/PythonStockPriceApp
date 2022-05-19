@@ -79,6 +79,10 @@ def helper(fv, c, n, m, price, low , high):
 
 
 def bond_yield_to_maturity(fv, c, n, m, price):
-    low = 0
-    high = 1 
+    if c > 0:
+        low = 0
+        high = 1 
+    else: 
+        low = -1
+        high = 0
     return helper(fv, c, n ,m ,price ,low ,high)
