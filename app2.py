@@ -18,11 +18,14 @@ def app():
     bcf = bond_cashflows(fv,c,n,m)
     df = discount_factors(r,n,m)
     res = [bcf[i - 1] * df[i - 1] for i in cf]
-    print(res)
 
     # print('cashflow:', res)
     # print(cumsum(res))
     pv = bond_price(fv,c,n,m,r)
+    convexity = bond_convexity(fv,c,n,m,r)
+    duration = bond_duration(fv,c,n,m,r)
     st.write('The Present Value of the Bond is: $', pv)
+    st.write('Bond Duration:', duration)
+    st.write('Bond Convexity:', convexity)
    
     

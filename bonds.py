@@ -86,3 +86,31 @@ def bond_yield_to_maturity(fv, c, n, m, price):
         low = -1
         high = 0
     return helper(fv, c, n ,m ,price ,low ,high)
+
+def bond_duration(fv, c, n, m, r): 
+    """ calculates and returns the duration metric for a bond """
+    # generate lists
+    t = cashflow_times(n,m)
+    df = discount_factors(r,n,m)
+    cf = bond_cashflows(fv,c,n,m)
+   
+    # build top and bottom of equation
+    top = sum([(t[i] * df[i] * cf[i]) for i in range(n * m)])
+    bottom = sum([(df[i] * cf[i]) for i in range(n * m)]) * m
+    
+    return top / bottom
+
+
+def bond_convexity(fv, c, n, m, r):
+    """calculates and returns the convexity metric for a bond."""
+    # generate lists
+    p = bond_price(fv,c,n,m,r)
+    t = cashflow_times(n,m)
+    df = discount_factors(r,n,m)
+    cf = bond_cashflows(fv,c,n,m)
+
+    # build top and bottom of equation 
+    top = sum( [((t[i] + 1) * t[i] * df[i] * cf[i]) for i in range(n * m)] )
+    bottom = p * ((1 + (r / m)) ** 2) * (m ** 2)
+
+    return top / bottom 
