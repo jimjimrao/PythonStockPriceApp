@@ -79,13 +79,8 @@ def helper(fv, c, n, m, price, low , high):
 
 
 def bond_yield_to_maturity(fv, c, n, m, price):
-    if c > 0:
-        low = 0
-        high = 1 
-    else: 
-        low = -1
-        high = 0
-    return helper(fv, c, n ,m ,price ,low ,high)
+
+    return helper(fv, c, n ,m ,price ,-1 ,1)
 
 def bond_duration(fv, c, n, m, r): 
     """ calculates and returns the duration metric for a bond """
