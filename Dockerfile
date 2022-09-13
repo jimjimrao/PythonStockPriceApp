@@ -3,7 +3,7 @@ FROM python:3
 
 # ADD src .
 COPY requirements.txt .
-RUN pip install --no-cache-dir numpy pandas matplotlib streamlit yfinance ta
+RUN pip install -r requirements.txt
 
 COPY . .
 ENV PORT=8501
